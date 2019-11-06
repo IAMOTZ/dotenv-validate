@@ -1,0 +1,24 @@
+{
+  "name": "dotenv-validate",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IAMOTZ/dotenv-validate.git"
+  },
+  "keywords": [
+    "dotenv",
+    "validate",
+    "dotenv-validate"
+  ],
+  "author": "Tunmise Ogunniyi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IAMOTZ/dotenv-validate/issues"
+  },
+  "homepage": "https://github.com/IAMOTZ/dotenv-validate#readme"
+}
