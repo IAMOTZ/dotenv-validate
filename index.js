@@ -1,11 +1,16 @@
 const path = require('path');
 
 let currentEnvironment = null;
+
+/**
+ * @description Default logger
+ * @param {string} message The message to log
+ */
 let log = (message) => console.warn(`[dotenv-validate][WARNING] ${message}`);
 
-// @todo: I need to validate the content of .evn.validate.js/json/yml
 module.exports = (givenEnvVars, config = {}) => {
   const dotenvValidatePath = config.path || path.resolve(process.cwd(), '.env.validate');
+  // @todo: I need to validate the content of .evn.validate.js/json
   const expectedEnvVars = require(dotenvValidatePath); 
 
   currentEnvironment = config.currentEnv || process.env.NODE_ENV || 'development';
@@ -15,7 +20,11 @@ module.exports = (givenEnvVars, config = {}) => {
   validate(givenEnvVars.parsed, expectedEnvVars);
 };
 
-
+/**
+ * @description Compaires the given environment vars against the expected environment vars
+ * @param {object} givenEnvVars The given environment variables
+ * @param {Object} expectedEnvVars The expected environment variables
+ */
 const validate = (givenEnvVars, expectedEnvVars) => {
   const variableNames = Object.keys(expectedEnvVars);
 
