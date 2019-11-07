@@ -1,8 +1,7 @@
-
 const path = require('path');
 
 let currentEnvironment = null;
-let logger = null;
+let log = (message) => console.warn(`[dotenv-validate][WARNING] ${message}`);
 
 // @todo: I need to validate the content of .evn.validate.js/json/yml
 module.exports = (givenEnvVars, config = {}) => {
@@ -11,7 +10,7 @@ module.exports = (givenEnvVars, config = {}) => {
 
   currentEnvironment = config.currentEnv || process.env.NODE_ENV || 'development';
   console.log('currentEnv not set in options or environment(NODE_ENV), using "development" as default');
-  logger = config.logger || console.log;
+  log = config.log || log;
 
   validate(givenEnvVars.parsed, expectedEnvVars);
 };
@@ -43,16 +42,16 @@ const validate = (givenEnvVars, expectedEnvVars) => {
     switch (severityLevel) {
       case 1: {
         if (!givenEnvVars[name] && defaultValue) {
-          logger(message || `Missing required env var ${name}. Defaulting to a value of "${defaultValue}"`);
+          log(message || `Missing required env var ${name}. Defaulting to a value of "${defaultValue}"`);
           process.env[name] = defaultValue;
         } else if (!process.env[name]) throw Error(message || `Missing required env var "${name}". App can't start without it.`);
         break;
       }
       case 2: {
         if (!givenEnvVars[name] && defaultValue) {
-          logger(message || `Missing needed env var "${name}". Defaulting to a value of "${defaultValue}"`);
+          log(message || `Missing needed env var "${name}". Defaulting to a value of "${defaultValue}"`);
           process.env[name] = defaultValue;
-        } else if (!givenEnvVars[name]) logger(message || `Missing needed env var "${name}"`);
+        } else if (!givenEnvVars[name]) log(message || `Missing needed env var "${name}"`);
         break;
       }
       default: {
