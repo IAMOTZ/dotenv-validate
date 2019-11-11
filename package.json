@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npm test",
+    "test": "jest",
     "lint": "eslint ./"
   },
   "repository": {
@@ -23,6 +23,12 @@
   },
   "homepage": "https://github.com/IAMOTZ/dotenv-validate#readme",
   "dependencies": {
-    "eslint": "^6.6.0"
+    "chalk": "^2.4.2",
+    "eslint": "^6.6.0",
+    "exit": "^0.1.2"
+  },
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "proxyquire": "^2.1.3"
   }
 }
