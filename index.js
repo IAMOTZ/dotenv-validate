@@ -4,39 +4,41 @@ const exit = require('exit');
 
 let currentEnvironment = null;
 
-/**
- * @description Default logger
- * @param {string} message The message to log
- */
-let log = (message) => console.warn(`[dotenv-validate][WARNING] ${message}`);
+const log = {
+  warn: (message) => console.warn(`[env-validate][${chalk.bold.keyword('orange')('WARNING')}]: ${message}`),
+  error: (message) => console.warn(`[env-validate][${chalk.bold.red('ERROR')}]: ${message}`),
+  info: (message) => console.warn(`[env-validate][${chalk.bold.cyanBright('INFO')}]: ${message}`)
+}
 
 module.exports = (givenEnvVars, config = {}) => {
   const dotenvValidatePath = config.path || path.resolve(process.cwd(), '.env.validate');
 
   let expectedEnvVars;
+
   try {
     expectedEnvVars = require(dotenvValidatePath);
   } catch(error) {
-    console.log('Invalid path to .env.validate');
-    // You should either have a .env.validate file at the directory of your package.json or specifity the full path to your .env.validate in config.path
+    log.error('Unable to find .env.validate.(js/json) file.');
+    log.info('.env.validate.(js/json) should either be in the working directory(cwd) or be specified as "path" in config options. Check the documentation for more details.');
     exit(1);
+  } finally {
+    if (!expectedEnvVars || expectedEnvVars.constructor.name !== 'Object') {
+      log.error(`Invalid validation object, your .env.validate.(js/json) file must be exporting an Object, received ${typeof expectedEnvVars} instead.`);
+      exit(1);
+    }
   }
 
-  try {
-
-    if (!expectedEnvVars || expectedEnvVars.constructor.name !== 'Object') throw new InvalidateConfig('Invalid Validation. Your .env.validate.(js/json) file must be exporting an object');
-  
+  try {  
     currentEnvironment = config.currentEnv || process.env.NODE_ENV || 'development';
-    console.log('currentEnv not set in options or environment(NODE_ENV), using "development" as default');
-    log = config.log || log;
-  
+    log.warn('currentEnv is not set in config options or environment(NODE_ENV), using the default("development").');
     validate(givenEnvVars, expectedEnvVars);
   } catch (error) {
     if (error.path) {
+      log.error('Environment is not valid');
       const message = chalk.red(`${chalk.bold(error.path)}: ${error.message}`);
-      console.error(message);
+      log.error(message);
     } else {
-      console.log(chalk.red(error));
+      log.error(error.message);
     }
     exit(1);
   }
@@ -44,7 +46,7 @@ module.exports = (givenEnvVars, config = {}) => {
 };
 
 /**
- * @description Compaires the given environment vars against the expected environment vars
+ * @description Compares the given environment vars against the expected environment vars
  * @param {object} givenEnvVars The given environment variables
  * @param {Object} expectedEnvVars The expected environment variables
  */
@@ -52,7 +54,7 @@ const validate = (givenEnvVars, expectedEnvVars) => {
   const variableNames = Object.keys(expectedEnvVars);
 
   variableNames.forEach((name) => {
-    if (!expectedEnvVars[name] || expectedEnvVars.constructor.name !== 'Object') throw new InvalidateConfig({ path: name, message: 'This value must be an object' });
+    if (!expectedEnvVars[name] || expectedEnvVars.constructor.name !== 'Object') throw new InvalidateConfig({ path: name, message: `This value must be an Object, got ${typeof name} instead` });
 
     const { env } = expectedEnvVars[name];
 
@@ -63,7 +65,7 @@ const validate = (givenEnvVars, expectedEnvVars) => {
       if (!env[currentEnvironment]) return;
     } else if (Array.isArray(env)) {
       if (!env.includes(currentEnvironment)) return;
-    } else throw new InvalidateConfig({ path: `${name}.env`, message: `This value can either be an array or an Object, got ${typeof env} instead`});
+    } else throw new InvalidateConfig({ path: `${name}.env`, message: `This value can either be an array or an Object, got ${typeof env} instead.`});
 
     let {
       severityLevel, message, defaultValue,
@@ -74,25 +76,22 @@ const validate = (givenEnvVars, expectedEnvVars) => {
     }
 
 
-    if(!severityLevel) throw new InvalidateConfig({ path: `${name}.severityLevel`, message: 'This value must be a string'});
+    if(!severityLevel) throw new InvalidateConfig({ path: `${name}.severityLevel`, message: `This value must be a number(1 or 2), got ${typeof severityLevel} instead.`});
 
     switch (severityLevel) {
       case 1: {
         if (!givenEnvVars[name] && defaultValue) {
-          log(message || `Missing required env var ${name}. Defaulting to a value of "${defaultValue}"`);
+          log.warn(message || `Missing required environment variable ${name}. Defaulting to a value of "${defaultValue}".`);
           process.env[name] = defaultValue;
-        } else if (!process.env[name]) throw Error(message || `Missing required env var "${name}". App can't start without it.`);
+        } else if (!process.env[name]) throw Error(message || `Missing required environment variable: "${name}". App can't start without it.`);
         break;
       }
       case 2: {
         if (!givenEnvVars[name] && defaultValue) {
-          log(message || `Missing needed env var "${name}". Defaulting to a value of "${defaultValue}"`);
+          log.warn(message || `Missing needed environment variable: "${name}". Defaulting to a value of "${defaultValue}".`);
           process.env[name] = defaultValue;
-        } else if (!givenEnvVars[name]) log(message || `Missing needed env var "${name}"`);
+        } else if (!givenEnvVars[name]) log.warn(message || `Missing needed environment variable: "${name}".`);
         break;
-      }
-      default: {
-        console.log(`Severity level for env var: "${name}" is not set, not sure if it is needed or not`);
       }
     }
   });
