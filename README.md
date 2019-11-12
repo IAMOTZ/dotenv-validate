@@ -22,7 +22,7 @@ yarn add env-validate
 
 ## Usage
 You should validate your environment variables as early as possible in your application.
-- Import/require and use the `env-validate` package. The `env-validate` package exports a function that accepts two parameters, the environment variables(`process.env`) and an optional configuration object, more about the configuration object [here]().
+- Import/require and use the `env-validate` package. The `env-validate` package exports a function that accepts two parameters, the environment variables(`process.env`) and an optional configuration object, more about the configuration object [here](#config-object).
 
 ```
 const envValidate = require('env-validate');
@@ -39,7 +39,7 @@ const envValidate = require('env-validate');
 envValidate(process.env);
 ```
 
-- Create a `.env.validate.(js/json)` file(can either be `.js` or `.json`) in the root directory of your project, this file should export the validation object, the validation object is just a normal javascript object where you specify how each environment variables should be validated. More about the validation object [here]().
+- Create a `.env.validate.(js/json)` file(can either be `.js` or `.json`) in the root directory of your project, this file should export the validation object, the validation object is just a normal javascript object where you specify how each environment variables should be validated. More about the validation object [here](#validation-object).
 
 
 ### Validation Object
