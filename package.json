@@ -1,7 +1,7 @@
 {
   "name": "env-validate",
   "version": "0.1.0",
-  "description": "",
+  "description": "A node package to help you validate your environment variables across multiple environment",
   "main": "index.js",
   "scripts": {
     "test": "jest",
