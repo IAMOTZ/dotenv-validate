@@ -1,5 +1,5 @@
 {
-  "name": "dotenv-validate",
+  "name": "env-validate",
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
@@ -9,19 +9,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/IAMOTZ/dotenv-validate.git"
+    "url": "git+https://github.com/IAMOTZ/env-validate.git"
   },
   "keywords": [
     "dotenv",
     "validate",
-    "dotenv-validate"
+    "dotenv-validate",
+    "env-validate"
   ],
   "author": "Tunmise Ogunniyi",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/IAMOTZ/dotenv-validate/issues"
+    "url": "https://github.com/IAMOTZ/env-validate/issues"
   },
-  "homepage": "https://github.com/IAMOTZ/dotenv-validate#readme",
+  "homepage": "https://github.com/IAMOTZ/env-validate#readme",
   "dependencies": {
     "chalk": "^2.4.2",
     "eslint": "^6.6.0",
